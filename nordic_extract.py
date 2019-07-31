@@ -46,7 +46,7 @@ ENGLISH  = E.translation
 
 main_query = """
   SELECT grammar.name, language.short_name, nordic_headword.name,
-         article, expressions, 'a name'
+         article, expressions, 'TBD'
     FROM nordic_headword
     LEFT JOIN grammar ON nordic_headword.grammar_id = grammar.id
     LEFT JOIN language ON language_id = language.id
