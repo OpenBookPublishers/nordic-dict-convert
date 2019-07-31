@@ -46,14 +46,10 @@ ENGLISH  = E.translation
 
 main_query = """
   SELECT grammar.name, language.short_name, nordic_headword.name,
-         article, expressions, english_headword.name
+         article, expressions, 'a name'
     FROM nordic_headword
     LEFT JOIN grammar ON nordic_headword.grammar_id = grammar.id
     LEFT JOIN language ON language_id = language.id
-    LEFT JOIN translation_link ON
-      nordic_headword.id = translation_link.nordic_headword_id
-    LEFT JOIN english_headword ON
-      english_headword_id = translation_link.english_headword_id
     LIMIT 50
   ;
 """
