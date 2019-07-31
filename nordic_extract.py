@@ -4,6 +4,13 @@
 # them to XML.
 
 # Work in progress.
+#
+# Known bugs:
+#
+#   the system by design currently only emits one translation for each
+#   headword. This is obviously wrong.
+#
+#   the script only emits the first 50 headwords
 
 # See also:
 #   https://www.dhi.ac.uk/lmnl/nordicheadword/displayPage/200?browse=
