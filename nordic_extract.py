@@ -55,13 +55,7 @@ main_query = """
   ;
 """
 
-def get_all_headwords():
-    a = argparse.ArgumentParser()
-    a.add_argument("--filename",
-                   default="live.db",
-                   help="Database filename to use instead of live.db")
-    args = a.parse_args()
-
+def get_all_headwords(args):
     db = sqlite.connect(args.filename)
     c = db.cursor()
 
@@ -89,8 +83,8 @@ def transform(headword):
 
     return HEADWORD(*args)
 
-def run():
-    headwords = [ transform(headword) for headword in get_all_headwords() ]
+def run(args):
+    headwords = [ transform(hw) for hw in get_all_headwords(args) ]
 
     the_doc = ROOT(*headwords)
     xml_text = lxml.etree.tostring(the_doc,
@@ -99,6 +93,10 @@ def run():
     )
     sys.stdout.buffer.write(xml_text)
 
-
 if __name__ == '__main__':
-    run()
+    a = argparse.ArgumentParser()
+    a.add_argument("--filename",
+                   default="live.db",
+                   help="Database filename to use instead of live.db")
+    args = a.parse_args()
+    run(args)
