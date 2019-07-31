@@ -28,6 +28,7 @@ import lxml.etree
 import lxml.builder    
 import html
 
+DEV_MODE = True # print debug output to stderr
 E        = lxml.builder.ElementMaker()
 
 # The names on the right hand side below, e.g., "nordic_headword", are used
@@ -61,7 +62,8 @@ def get_all_headwords(args):
 
     c.execute(main_query)
     for row in c.fetchall():
-        print(row, file=sys.stderr)
+        if DEV_MODE:
+            print(row, file=sys.stderr)
         yield row
 
 def fixup_article(article):
