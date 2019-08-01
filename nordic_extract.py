@@ -45,8 +45,12 @@ TEXT     = E.article
 ENGLISH  = E.translation
 
 main_query = """
-  SELECT grammar.name, language.short_name, nordic_headword.name,
-         article, expressions, english_headword.name
+  SELECT grammar.name AS part_of_speech,
+         language.short_name AS language_name,
+         nordic_headword.name AS nordic_headword_name,
+         article AS article,
+         expressions AS expressions,
+         english_headword.name AS english_headword_name
     FROM nordic_headword
     LEFT JOIN grammar ON nordic_headword.grammar_id = grammar.id
     LEFT JOIN language ON language_id = language.id
