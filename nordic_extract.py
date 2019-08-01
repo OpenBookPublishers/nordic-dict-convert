@@ -15,8 +15,6 @@
 #
 #  * the system by design currently only emits one translation for each
 #    headword. This is obviously wrong.
-#  * the script only emits the first 50 headwords
-#  * does not strip the <p> and </p> from the article
 #  * does not disassemble the embedded (sic) HTML
 #  * does not extract all relevant fields
 
