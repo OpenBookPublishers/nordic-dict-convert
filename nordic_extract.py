@@ -58,12 +58,13 @@ main_query = """
 
 def get_all_headwords(args):
     db = sqlite3.dbapi2.connect(args.filename)
+    db.row_factory = sqlite3.Row
     c = db.cursor()
 
     c.execute(main_query)
     for row in c.fetchall():
         if DEV_MODE:
-            print(row, file=sys.stderr)
+            print(tuple(row), file=sys.stderr)
         yield row
 
 def fixup_article(article):
