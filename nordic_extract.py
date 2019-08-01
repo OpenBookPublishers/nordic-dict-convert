@@ -72,6 +72,11 @@ def get_all_headwords(args):
         yield row
 
 def fixup_article(article):
+    if article is None:
+        return None
+    if article == "":
+        return None
+    #assert article.startswith("<p>"), article
     return html.unescape(article)
 
 def transform(headword):
@@ -85,8 +90,9 @@ def transform(headword):
         ENGLISH(english_word)
     ]
 
-    if article is not None:
-        args.append(TEXT(fixup_article(article)))
+    article_text = fixup_article(article)
+    if article_text is not None:
+        args.append(TEXT(article_text))
 
     return HEADWORD(*args)
 
