@@ -109,10 +109,13 @@ def run(args):
     )
     sys.stdout.buffer.write(xml_text)
 
-if __name__ == '__main__':
+def process_args():
     a = argparse.ArgumentParser()
     a.add_argument("--filename",
                    default="live.db",
                    help="Database filename to use instead of live.db")
     args = a.parse_args()
-    run(args)
+    return run(args)
+
+if __name__ == '__main__':
+    exit(process_args())
