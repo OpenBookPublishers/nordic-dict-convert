@@ -76,7 +76,10 @@ def fixup_article(article):
         return None
     if article == "":
         return None
-    #assert article.startswith("<p>"), article
+    if article.startswith("<p>"):
+        assert article.endswith("</p>")
+        article = article[3:]
+        article = article[:-4]
     return html.unescape(article)
 
 def transform(headword):
