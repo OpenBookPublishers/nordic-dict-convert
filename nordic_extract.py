@@ -25,7 +25,7 @@
 
 import sys
 import argparse
-from   sqlite3 import dbapi2 as sqlite
+import sqlite3
 import lxml.etree
 import lxml.builder    
 import html
@@ -57,7 +57,7 @@ main_query = """
 """
 
 def get_all_headwords(args):
-    db = sqlite.connect(args.filename)
+    db = sqlite3.dbapi2.connect(args.filename)
     c = db.cursor()
 
     c.execute(main_query)
