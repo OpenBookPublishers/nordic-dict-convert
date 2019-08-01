@@ -46,7 +46,7 @@ ENGLISH  = E.translation
 
 main_query = """
   SELECT grammar.name AS part_of_speech,
-         language.short_name AS language_name,
+         language.short_name AS language_code,
          nordic_headword.name AS nordic_headword_name,
          article AS article,
          expressions AS expressions,
@@ -83,17 +83,16 @@ def fixup_article(article):
     return html.unescape(article)
 
 def transform(headword):
-    (part_of_speech, language, word, article, expressions,
-     english_word) = headword
+    assert 6 == len(tuple(headword))
 
     args = [
-        NAME(word),
-        POS(part_of_speech),
-        LANG(language),
-        ENGLISH(english_word)
+        NAME(headword['nordic_headword_name']),
+        POS(headword['part_of_speech']),
+        LANG(headword['language_code']),
+        ENGLISH(headword['english_headword_name'])
     ]
 
-    article_text = fixup_article(article)
+    article_text = fixup_article(headword['article'])
     if article_text is not None:
         args.append(TEXT(article_text))
 
