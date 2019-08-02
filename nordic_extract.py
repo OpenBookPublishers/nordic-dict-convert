@@ -74,6 +74,10 @@ def fix_db(filename, active_filename):
     db = sqlite3.dbapi2.connect(active_filename)
     c = db.cursor()
     ddls = [
+        """DELETE FROM translation_link WHERE nordic_headword_id IS NULL;""",
+        """DELETE FROM translation_link WHERE english_headword_id IS NULL;""",
+        """DELETE FROM comparison WHERE nordic_headword1_id IS NULL;""",
+        """DELETE FROM comparison WHERE nordic_headword2_id IS NULL;"""
     ]
     for ddl in ddls:
         c.execute(ddl)
