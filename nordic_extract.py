@@ -62,9 +62,13 @@ main_query = """
   ;
 """
 
-def get_all_headwords(args):
-    db = sqlite3.dbapi2.connect(args.filename)
+def get_db_handle(filename):
+    db = sqlite3.dbapi2.connect(filename)
     db.row_factory = sqlite3.Row
+    return db
+
+def get_all_headwords(args):
+    db = get_db_handle(args.filename)
     c = db.cursor()
 
     c.execute(main_query)
