@@ -62,14 +62,13 @@ main_query = """
   ;
 """
 
-def get_db_handle(filename):
-    active_filename = filename
+def get_db_handle(args):
+    active_filename = args.filename
     db = sqlite3.dbapi2.connect(active_filename)
     db.row_factory = sqlite3.Row
     return db
 
-def get_all_headwords(args):
-    db = get_db_handle(args.filename)
+def get_all_headwords(db, args):
     c = db.cursor()
 
     c.execute(main_query)
@@ -110,7 +109,8 @@ def transform(headword):
     return HEADWORD(*args)
 
 def run(args):
-    headwords = [ transform(hw) for hw in get_all_headwords(args) ]
+    db = get_db_handle(args)
+    headwords = [ transform(hw) for hw in get_all_headwords(db, args) ]
 
     the_doc = ROOT(*headwords)
     xml_text = lxml.etree.tostring(the_doc,
