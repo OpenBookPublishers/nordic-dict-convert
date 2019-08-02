@@ -30,7 +30,7 @@ import tempfile
 from contextlib import contextmanager
 import sqlite3
 import lxml.etree
-import lxml.builder    
+import lxml.builder
 import html
 
 DEV_MODE = True # print debug output to stderr
