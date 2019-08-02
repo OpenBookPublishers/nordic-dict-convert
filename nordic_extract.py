@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # nordic_extract.py, by Martin Keegan
 # A tool for extracting nordic dictionary entries from a database and dumping
