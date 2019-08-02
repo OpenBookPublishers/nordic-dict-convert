@@ -45,7 +45,6 @@ NAME         = E.name
 POS          = E.type
 LANG         = E.language
 TEXT         = E.article
-ENGLISH      = E.translation
 REFERENCES   = E.references
 COMPARISON   = E.comparison
 EXPRESSIONS  = E.expressions
@@ -59,14 +58,10 @@ main_query = """
          nordic_headword.name AS nordic_headword_name,
          article AS article,
          expressions AS expressions,
-         english_headword.name AS english_headword_name,
-         translation_link.id AS tl_id
+         nordic_headword.id AS nhw_id
     FROM nordic_headword
     LEFT JOIN grammar ON nordic_headword.grammar_id = grammar.id
     LEFT JOIN language ON language_id = language.id
-    LEFT JOIN translation_link ON nordic_headword.id = nordic_headword_id
-    LEFT JOIN english_headword ON english_headword.id = english_headword_id
-    WHERE nordic_headword_id IS NOT NULL
   ;
 """
 
@@ -137,16 +132,15 @@ def fixup_article(article):
     return html.unescape(article)
 
 def transform(db, headword):
-    assert 7 == len(tuple(headword))
+    assert 6 == len(tuple(headword))
 
-    tt = run_query(db, translations_query, (headword["tl_id"],))
+    tt = run_query(db, translations_query, (headword["nhw_id"],))
     translations = [ TRANSLATION(t["english_name"]) for t in tt ]
 
     args = [
         NAME(headword['nordic_headword_name']),
         POS(headword['part_of_speech']),
         LANG(headword['language_code']),
-        ENGLISH(headword['english_headword_name']),
         REFERENCES("TBD"),
         COMPARISON("TBD"),
         EXPRESSIONS("TBD"),
