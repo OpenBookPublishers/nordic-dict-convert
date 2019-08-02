@@ -50,6 +50,8 @@ REFERENCES   = E.references
 COMPARISON   = E.comparison
 EXPRESSIONS  = E.expressions
 ALT_NAME     = E.alternative_name
+TRANSLATIONS = E.translations
+TRANSLATION  = E.translation
 
 main_query = """
   SELECT grammar.name AS part_of_speech,
@@ -68,7 +70,7 @@ main_query = """
 """
 
 translations_query = """
-  SELECT * FROM translations;
+  SELECT * FROM translations WHERE tl_id = ?;
 """
 
 def fix_db(filename, active_filename):
@@ -109,21 +111,17 @@ def get_db_handle(args, active_filename):
     db.row_factory = sqlite3.Row
     return db
 
-def run_query(db, q):
+def run_query(db, q, q_args):
     c = db.cursor()
 
-    c.execute(q)
+    c.execute(q, q_args)
     for row in c.fetchall():
         if DEV_MODE:
-            print(tuple(row), file=sys.stderr)
+            pass # print(tuple(row), file=sys.stderr)
         yield row
 
 def get_all_headwords(db):
-    return run_query(db, main_query)
-
-def get_all_translations(db):
-    return dict([ (row["tl_id"], row)
-                  for row in run_query(db, translations_query)])
+    return run_query(db, main_query, {})
 
 def fixup_article(article):
     if article is None:
@@ -136,8 +134,10 @@ def fixup_article(article):
         article = article[:-4]
     return html.unescape(article)
 
-def transform(headword):
+def transform(db, headword):
     assert 6 == len(tuple(headword))
+
+    translations = "TBD"
 
     args = [
         NAME(headword['nordic_headword_name']),
@@ -147,6 +147,7 @@ def transform(headword):
         REFERENCES("TBD"),
         COMPARISON("TBD"),
         EXPRESSIONS("TBD"),
+        TRANSLATIONS(translations),
         ALT_NAME("TBD")
     ]
 
@@ -158,8 +159,7 @@ def transform(headword):
 
 def run(args, tmp_path):
     db = get_db_handle(args, tmp_path)
-    translations = get_all_translations(db)
-    headwords = [ transform(hw) for hw in get_all_headwords(db) ]
+    headwords = [ transform(db, hw) for hw in get_all_headwords(db) ]
 
     the_doc = ROOT(*headwords)
     xml_text = lxml.etree.tostring(the_doc,
