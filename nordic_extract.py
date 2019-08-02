@@ -71,6 +71,14 @@ def fix_db(filename, active_filename):
     """Copy the database from FILENAME into ACTIVE_FILENAME, then modify
        its schema slightly."""
     shutil.copyfile(filename, active_filename)
+    db = sqlite3.dbapi2.connect(active_filename)
+    c = db.cursor()
+    ddls = [
+    ]
+    for ddl in ddls:
+        c.execute(ddl)
+    db.commit()
+    db.close()
 
 def get_db_handle(args, active_filename):
     fix_db(args.filename, active_filename)
