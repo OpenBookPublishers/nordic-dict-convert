@@ -21,8 +21,12 @@
 # See also:
 #   https://www.dhi.ac.uk/lmnl/nordicheadword/displayPage/200?browse=
 
+import os
+import shutil
 import sys
 import argparse
+import tempfile
+from contextlib import contextmanager
 import sqlite3
 import lxml.etree
 import lxml.builder    
@@ -62,8 +66,13 @@ main_query = """
   ;
 """
 
-def get_db_handle(args):
-    active_filename = args.filename
+def fix_db(filename, active_filename):
+    """Copy the database from FILENAME into ACTIVE_FILENAME, then modify
+       its schema slightly."""
+    shutil.copyfile(filename, active_filename)
+
+def get_db_handle(args, active_filename):
+    fix_db(args.filename, active_filename)
     db = sqlite3.dbapi2.connect(active_filename)
     db.row_factory = sqlite3.Row
     return db
@@ -108,8 +117,8 @@ def transform(headword):
 
     return HEADWORD(*args)
 
-def run(args):
-    db = get_db_handle(args)
+def run(args, tmp_path):
+    db = get_db_handle(args, tmp_path)
     headwords = [ transform(hw) for hw in get_all_headwords(db) ]
 
     the_doc = ROOT(*headwords)
@@ -119,13 +128,22 @@ def run(args):
     )
     sys.stdout.buffer.write(xml_text)
 
+@contextmanager
+def named_temp():
+    fd, path = tempfile.mkstemp()
+
+    yield path
+
+    os.unlink(path)
+
 def process_args():
     a = argparse.ArgumentParser()
     a.add_argument("--filename",
                    default="live.db",
                    help="Database filename to use instead of live.db")
     args = a.parse_args()
-    return run(args)
+    with named_temp() as tmp_path:
+        return run(args, tmp_path)
 
 if __name__ == '__main__':
     exit(process_args())
