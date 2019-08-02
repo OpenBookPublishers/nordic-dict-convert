@@ -51,6 +51,7 @@ EXPRESSIONS  = E.expressions
 ALT_NAME     = E.alternative_name
 TRANSLATIONS = E.translations
 TRANSLATION  = E.translation
+ENG_HEADWORD = E.english_headword
 
 main_query = """
   SELECT grammar.name AS part_of_speech,
@@ -135,7 +136,15 @@ def transform(db, headword):
     assert 6 == len(tuple(headword))
 
     def make_translation(t):
-        return TRANSLATION(t["english_name"])
+        results = [
+            ENG_HEADWORD(t["english_name"])
+        ]
+        lang = t["lang_short_name"]
+        if lang is not None:
+            results.append(LANG(lang))
+        return TRANSLATION(
+            *results
+        )
 
     tt = run_query(db, translations_query, (headword["nhw_id"],))
     translations = [ make_translation(t) for t in tt ]
