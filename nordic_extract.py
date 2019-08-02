@@ -68,7 +68,7 @@ def get_db_handle(args):
     db.row_factory = sqlite3.Row
     return db
 
-def get_all_headwords(db, args):
+def get_all_headwords(db):
     c = db.cursor()
 
     c.execute(main_query)
@@ -110,7 +110,7 @@ def transform(headword):
 
 def run(args):
     db = get_db_handle(args)
-    headwords = [ transform(hw) for hw in get_all_headwords(db, args) ]
+    headwords = [ transform(hw) for hw in get_all_headwords(db) ]
 
     the_doc = ROOT(*headwords)
     xml_text = lxml.etree.tostring(the_doc,
