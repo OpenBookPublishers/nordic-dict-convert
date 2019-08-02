@@ -63,7 +63,8 @@ main_query = """
 """
 
 def get_db_handle(filename):
-    db = sqlite3.dbapi2.connect(filename)
+    active_filename = filename
+    db = sqlite3.dbapi2.connect(active_filename)
     db.row_factory = sqlite3.Row
     return db
 
