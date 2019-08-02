@@ -67,6 +67,10 @@ main_query = """
   ;
 """
 
+translations_query = """
+  SELECT * FROM translations;
+"""
+
 def fix_db(filename, active_filename):
     """Copy the database from FILENAME into ACTIVE_FILENAME, then modify
        its schema slightly."""
@@ -77,8 +81,23 @@ def fix_db(filename, active_filename):
         """DELETE FROM translation_link WHERE nordic_headword_id IS NULL;""",
         """DELETE FROM translation_link WHERE english_headword_id IS NULL;""",
         """DELETE FROM comparison WHERE nordic_headword1_id IS NULL;""",
-        """DELETE FROM comparison WHERE nordic_headword2_id IS NULL;"""
-    ]
+        """DELETE FROM comparison WHERE nordic_headword2_id IS NULL;""",
+        """SELECT translation_link.id AS tl_id,
+                  language.short_name AS lang_short_name,
+                  english_headword.name AS english_name,
+                  evidence AS evidence,
+                  law.short_name AS law_short_name
+             FROM translation_link
+             LEFT JOIN english_headword ON
+                       english_headword_id = english_headword.id
+             LEFT JOIN language_law_instance ON
+                       translation_link_id = translation_link.id
+             LEFT JOIN language ON
+                       language_law_instance.language_id = language.id
+             LEFT JOIN law ON law_id = law.id
+           ;
+        """
+          ]
     for ddl in ddls:
         c.execute(ddl)
     db.commit()
@@ -90,14 +109,21 @@ def get_db_handle(args, active_filename):
     db.row_factory = sqlite3.Row
     return db
 
-def get_all_headwords(db):
+def run_query(db, q):
     c = db.cursor()
 
-    c.execute(main_query)
+    c.execute(q)
     for row in c.fetchall():
         if DEV_MODE:
             print(tuple(row), file=sys.stderr)
         yield row
+
+def get_all_headwords(db):
+    return run_query(db, main_query)
+
+def get_all_translations(db):
+    return dict([ (row["tl_id"], row)
+                  for row in run_query(db, translations_query)])
 
 def fixup_article(article):
     if article is None:
@@ -132,6 +158,7 @@ def transform(headword):
 
 def run(args, tmp_path):
     db = get_db_handle(args, tmp_path)
+    translations = get_all_translations(db)
     headwords = [ transform(hw) for hw in get_all_headwords(db) ]
 
     the_doc = ROOT(*headwords)
