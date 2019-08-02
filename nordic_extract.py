@@ -34,13 +34,17 @@ E        = lxml.builder.ElementMaker()
 # The names on the right hand side below, e.g., "nordic_headword", are used
 # as the tag names in the generated XML, i.e.,
 #   <nordic_headword>...</nordic_headword>
-ROOT     = E.nordic_headwords
-HEADWORD = E.nordic_headword
-NAME     = E.name
-POS      = E.type
-LANG     = E.language
-TEXT     = E.article
-ENGLISH  = E.translation
+ROOT         = E.nordic_headwords
+HEADWORD     = E.nordic_headword
+NAME         = E.name
+POS          = E.type
+LANG         = E.language
+TEXT         = E.article
+ENGLISH      = E.translation
+REFERENCES   = E.references
+COMPARISON   = E.comparison
+EXPRESSIONS  = E.expressions
+ALT_NAME     = E.alternative_name
 
 main_query = """
   SELECT grammar.name AS part_of_speech,
@@ -87,7 +91,11 @@ def transform(headword):
         NAME(headword['nordic_headword_name']),
         POS(headword['part_of_speech']),
         LANG(headword['language_code']),
-        ENGLISH(headword['english_headword_name'])
+        ENGLISH(headword['english_headword_name']),
+        REFERENCES("TBD"),
+        COMPARISON("TBD"),
+        EXPRESSIONS("TBD"),
+        ALT_NAME("TBD")
     ]
 
     article_text = fixup_article(headword['article'])
