@@ -59,7 +59,8 @@ main_query = """
          nordic_headword.name AS nordic_headword_name,
          article AS article,
          expressions AS expressions,
-         english_headword.name AS english_headword_name
+         english_headword.name AS english_headword_name,
+         translation_link.id AS tl_id
     FROM nordic_headword
     LEFT JOIN grammar ON nordic_headword.grammar_id = grammar.id
     LEFT JOIN language ON language_id = language.id
@@ -84,7 +85,8 @@ def fix_db(filename, active_filename):
         """DELETE FROM translation_link WHERE english_headword_id IS NULL;""",
         """DELETE FROM comparison WHERE nordic_headword1_id IS NULL;""",
         """DELETE FROM comparison WHERE nordic_headword2_id IS NULL;""",
-        """SELECT translation_link.id AS tl_id,
+        """CREATE VIEW translations AS
+           SELECT translation_link.id AS tl_id,
                   language.short_name AS lang_short_name,
                   english_headword.name AS english_name,
                   evidence AS evidence,
@@ -121,7 +123,7 @@ def run_query(db, q, q_args):
         yield row
 
 def get_all_headwords(db):
-    return run_query(db, main_query, {})
+    return run_query(db, main_query, [])
 
 def fixup_article(article):
     if article is None:
@@ -135,9 +137,10 @@ def fixup_article(article):
     return html.unescape(article)
 
 def transform(db, headword):
-    assert 6 == len(tuple(headword))
+    assert 7 == len(tuple(headword))
 
-    translations = "TBD"
+    tt = run_query(db, translations_query, (headword["tl_id"],))
+    translations = [ TRANSLATION(t["english_name"]) for t in tt ]
 
     args = [
         NAME(headword['nordic_headword_name']),
@@ -147,7 +150,7 @@ def transform(db, headword):
         REFERENCES("TBD"),
         COMPARISON("TBD"),
         EXPRESSIONS("TBD"),
-        TRANSLATIONS(translations),
+        TRANSLATIONS(*translations),
         ALT_NAME("TBD")
     ]
 
