@@ -134,8 +134,11 @@ def fixup_article(article):
 def transform(db, headword):
     assert 6 == len(tuple(headword))
 
+    def make_translation(t):
+        return TRANSLATION(t["english_name"])
+
     tt = run_query(db, translations_query, (headword["nhw_id"],))
-    translations = [ TRANSLATION(t["english_name"]) for t in tt ]
+    translations = [ make_translation(t) for t in tt ]
 
     args = [
         NAME(headword['nordic_headword_name']),
