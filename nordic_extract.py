@@ -67,7 +67,7 @@ main_query = """
 """
 
 translations_query = """
-  SELECT * FROM translations WHERE tl_id = ?;
+  SELECT * FROM translations WHERE nhw_id = ?;
 """
 
 def fix_db(filename, active_filename):
@@ -83,6 +83,7 @@ def fix_db(filename, active_filename):
         """DELETE FROM comparison WHERE nordic_headword2_id IS NULL;""",
         """CREATE VIEW translations AS
            SELECT translation_link.id AS tl_id,
+                  translation_link.nordic_headword_id AS nhw_id,
                   language.short_name AS lang_short_name,
                   english_headword.name AS english_name,
                   evidence AS evidence,
