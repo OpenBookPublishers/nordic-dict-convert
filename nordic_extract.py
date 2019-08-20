@@ -120,16 +120,16 @@ def run_query(db, q, q_args):
 def get_all_headwords(db):
     return run_query(db, main_query, [])
 
-def fixup_article(article):
-    if article is None:
+def fixup_text(text):
+    if text is None:
         return None
-    if article == "":
+    if text == "":
         return None
-    if article.startswith("<p>"):
-        assert article.endswith("</p>")
-        article = article[3:]
-        article = article[:-4]
-    return html.unescape(article)
+    if text.startswith("<p>"):
+        assert text.endswith("</p>")
+        text = text[3:]
+        text = text[:-4]
+    return html.unescape(text)
 
 def transform(db, headword):
     assert 7 == len(tuple(headword))
@@ -159,7 +159,7 @@ def transform(db, headword):
 
     attributes = ['article', 'refs', 'expressions']
     for a in attributes:
-        a_text = fixup_article(headword[a])
+        a_text = fixup_text(headword[a])
         if a_text is not None:
             args.append(E.__getattr__(a)(a_text))
 
