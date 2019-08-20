@@ -45,7 +45,7 @@ NAME         = E.name
 POS          = E.type
 LANG         = E.language
 TEXT         = E.article
-REFERENCES   = E.references
+REFS         = E.references
 COMPARISON   = E.comparison
 EXPRESSIONS  = E.expressions
 ALT_NAME     = E.alternative_name
@@ -166,7 +166,7 @@ def transform(db, headword):
 
     refs_text = fixup_article(headword['refs'])
     if type(refs_text) is str and len(refs_text) > 0:
-        args.append(REFERENCES(refs_text))
+        args.append(REFS(refs_text))
 
     expressions_text = fixup_article(headword['expressions'])
     if type(expressions_text) is str and len(expressions_text) > 0:
