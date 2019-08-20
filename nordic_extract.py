@@ -44,10 +44,7 @@ HEADWORD     = E.nordic_headword
 NAME         = E.name
 POS          = E.type
 LANG         = E.language
-TEXT         = E.article
-REFS         = E.references
 COMPARISON   = E.comparison
-EXPRESSIONS  = E.expressions
 ALT_NAME     = E.alternative_name
 TRANSLATIONS = E.translations
 TRANSLATION  = E.translation
@@ -160,17 +157,11 @@ def transform(db, headword):
         ALT_NAME("TBD")
     ]
 
-    article_text = fixup_article(headword['article'])
-    if article_text is not None:
-        args.append(TEXT(article_text))
-
-    refs_text = fixup_article(headword['refs'])
-    if type(refs_text) is str and len(refs_text) > 0:
-        args.append(REFS(refs_text))
-
-    expressions_text = fixup_article(headword['expressions'])
-    if type(expressions_text) is str and len(expressions_text) > 0:
-        args.append(EXPRESSIONS(expressions_text))
+    attributes = ['article', 'refs', 'expressions']
+    for a in attributes:
+        a_text = fixup_article(headword[a])
+        if a_text is not None:
+            args.append(E.__getattr__(a)(a_text))
 
     return HEADWORD(*args)
 
