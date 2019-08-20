@@ -45,7 +45,10 @@ NAME         = E.name
 POS          = E.type
 LANG         = E.language
 COMPARISON   = E.comparison
+ALTERNATIVES = E.alternatives
+ALTERNATIVE  = E.alternative
 ALT_NAME     = E.alternative_name
+ALT_LANG     = E.alternative_lang
 TRANSLATIONS = E.translations
 TRANSLATION  = E.translation
 ENG_HEADWORD = E.english_headword
@@ -67,6 +70,10 @@ main_query = """
 
 translations_query = """
   SELECT * FROM translations WHERE nhw_id = ?;
+"""
+
+alternatives_query = """
+  SELECT * FROM alternative WHERE nordic_headword_id = ?;
 """
 
 def fix_db(filename, active_filename):
@@ -151,8 +158,21 @@ def transform(db, headword):
             *results
         )
 
+    def make_alternative(a):
+        results = [
+            ALT_NAME(a["alternative_name"]),
+            ALT_LANG("TBD")
+        ]
+
+        return ALTERNATIVE(
+            *results
+        )
+
     tt = run_query(db, translations_query, (headword["nhw_id"],))
     translations = [ make_translation(t) for t in tt ]
+
+    aa = run_query(db, alternatives_query, (headword["nhw_id"],))
+    alternatives = [ make_alternative(a) for a in aa ]
 
     args = [
         NAME(headword['nordic_headword_name']),
@@ -160,7 +180,7 @@ def transform(db, headword):
         LANG(headword['language_code']),
         COMPARISON("TBD"),
         TRANSLATIONS(*translations),
-        ALT_NAME("TBD")
+        ALTERNATIVES(*alternatives)
     ]
 
     attributes = ['article', 'refs', 'expressions']
