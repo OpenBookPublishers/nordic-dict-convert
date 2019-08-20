@@ -59,6 +59,7 @@ main_query = """
          nordic_headword.name AS nordic_headword_name,
          article AS article,
          expressions AS expressions,
+         refs AS refs,
          nordic_headword.id AS nhw_id
     FROM nordic_headword
     LEFT JOIN grammar ON nordic_headword.grammar_id = grammar.id
@@ -134,7 +135,7 @@ def fixup_article(article):
     return html.unescape(article)
 
 def transform(db, headword):
-    assert 6 == len(tuple(headword))
+    assert 7 == len(tuple(headword))
 
     def make_translation(t):
         results = [
@@ -154,9 +155,7 @@ def transform(db, headword):
         NAME(headword['nordic_headword_name']),
         POS(headword['part_of_speech']),
         LANG(headword['language_code']),
-        REFERENCES("TBD"),
         COMPARISON("TBD"),
-        EXPRESSIONS("TBD"),
         TRANSLATIONS(*translations),
         ALT_NAME("TBD")
     ]
@@ -164,6 +163,14 @@ def transform(db, headword):
     article_text = fixup_article(headword['article'])
     if article_text is not None:
         args.append(TEXT(article_text))
+
+    refs_text = fixup_article(headword['refs'])
+    if type(refs_text) is str and len(refs_text) > 0:
+        args.append(REFERENCES(refs_text))
+
+    expressions_text = fixup_article(headword['expressions'])
+    if type(expressions_text) is str and len(expressions_text) > 0:
+        args.append(EXPRESSIONS(expressions_text))
 
     return HEADWORD(*args)
 
