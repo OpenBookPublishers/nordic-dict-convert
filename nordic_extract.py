@@ -73,7 +73,9 @@ translations_query = """
 """
 
 alternatives_query = """
-  SELECT * FROM alternative WHERE nordic_headword_id = ?;
+  SELECT * FROM alternative
+    LEFT JOIN language ON language_id = language.id
+    WHERE nordic_headword_id = ?;
 """
 
 def fix_db(filename, active_filename):
@@ -161,7 +163,7 @@ def transform(db, headword):
     def make_alternative(a):
         results = [
             ALT_NAME(a["alternative_name"]),
-            ALT_LANG("TBD")
+            ALT_LANG(a["short_name"])
         ]
 
         return ALTERNATIVE(
