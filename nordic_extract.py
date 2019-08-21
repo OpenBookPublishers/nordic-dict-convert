@@ -146,11 +146,15 @@ def transform(db, headword):
 
     def make_translation(t):
         results = [
-            ENG_HEADWORD(t["english_name"])
+            ENG_HEADWORD(t["english_name"]),
         ]
         lang = t["lang_short_name"]
         if lang is not None:
             results.append(LANG(lang))
+
+        law = t["law_short_name"]
+        if law is not None:
+            results.append(E.law(law))
 
         evidence_text = fixup_text(t["evidence"])
         if evidence_text is not None:
