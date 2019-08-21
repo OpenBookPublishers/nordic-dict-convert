@@ -42,6 +42,7 @@ HEADWORD     = E.nordic_headword
 NAME         = E.name
 POS          = E.type
 LANG         = E.language
+COMPARISONS  = E.comparisons
 COMPARISON   = E.comparison
 ALTERNATIVES = E.alternatives
 ALTERNATIVE  = E.alternative
@@ -76,6 +77,12 @@ alternatives_query = """
   SELECT * FROM alternative
     LEFT JOIN language ON language_id = language.id
     WHERE nordic_headword_id = ?;
+"""
+
+comparisons_query = """
+  SELECT nordic_headword2_id, name FROM comparison
+    LEFT JOIN nordic_headword ON nordic_headword2_id = nordic_headword.id
+    WHERE nordic_headword1_id = ?;
 """
 
 def fix_db(filename, active_filename):
@@ -174,17 +181,29 @@ def transform(db, headword):
             *results
         )
 
+    def make_comparison(c):
+        results = [
+            NAME(c["name"]),
+            SURROGATE(str(c["nordic_headword2_id"]))
+        ]
+        return COMPARISON(
+            *results
+        )
+
     tt = run_query(db, translations_query, (headword["nhw_id"],))
     translations = [ make_translation(t) for t in tt ]
 
     aa = run_query(db, alternatives_query, (headword["nhw_id"],))
     alternatives = [ make_alternative(a) for a in aa ]
 
+    cc = run_query(db, comparisons_query, (headword["nhw_id"],))
+    comparisons  = [ make_comparison(c) for c in cc ]
+
     args = [
         NAME(headword['nordic_headword_name']),
         POS(headword['part_of_speech']),
         LANG(headword['language_code']),
-        COMPARISON("TBD"),
+        COMPARISONS(*comparisons),
         TRANSLATIONS(*translations),
         ALTERNATIVES(*alternatives),
         SURROGATE(str(headword['nhw_id']))
