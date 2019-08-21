@@ -14,8 +14,6 @@
 #
 # Known bugs (out of date):
 #
-#  * the system by design currently only emits one translation for each
-#    headword. This is obviously wrong.
 #  * does not disassemble the embedded (sic) HTML
 #  * does not extract all relevant fields
 
