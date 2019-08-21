@@ -52,6 +52,7 @@ TRANSLATION  = E.translation
 ENG_HEADWORD = E.english_headword
 EVIDENCE     = E.evidence
 LAW          = E.law
+SURROGATE    = E.id
 
 main_query = """
   SELECT grammar.name AS part_of_speech,
@@ -185,7 +186,8 @@ def transform(db, headword):
         LANG(headword['language_code']),
         COMPARISON("TBD"),
         TRANSLATIONS(*translations),
-        ALTERNATIVES(*alternatives)
+        ALTERNATIVES(*alternatives),
+        SURROGATE(str(headword['nhw_id']))
     ]
 
     attributes = ['article', 'refs', 'expressions']
