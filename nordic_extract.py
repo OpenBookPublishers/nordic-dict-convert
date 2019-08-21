@@ -51,6 +51,7 @@ TRANSLATIONS = E.translations
 TRANSLATION  = E.translation
 ENG_HEADWORD = E.english_headword
 EVIDENCE     = E.evidence
+LAW          = E.law
 
 main_query = """
   SELECT grammar.name AS part_of_speech,
@@ -152,7 +153,7 @@ def transform(db, headword):
 
         law = t["law_short_name"]
         if law is not None:
-            results.append(E.law(law))
+            results.append(LAW(law))
 
         evidence_text = fixup_text(t["evidence"])
         if evidence_text is not None:
