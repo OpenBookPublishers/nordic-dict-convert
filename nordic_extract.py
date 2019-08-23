@@ -232,9 +232,10 @@ def run(args, tmp_path):
 def named_temp():
     fd, path = tempfile.mkstemp()
 
-    yield path
-
-    os.unlink(path)
+    try:
+        yield path
+    finally:
+        os.unlink(path)
 
 def process_args():
     a = argparse.ArgumentParser()
