@@ -217,15 +217,15 @@ def transform(db, headword):
 
     return HEADWORD(*args)
 
+def pretty_format_xml(root):
+    return lxml.etree.tostring(root, pretty_print=True, encoding='UTF-8')
+
 def run(args, tmp_path):
     db = get_db_handle(args, tmp_path)
     headwords = [ transform(db, hw) for hw in get_all_headwords(db) ]
 
     the_doc = ROOT(*headwords)
-    xml_text = lxml.etree.tostring(the_doc,
-                                   pretty_print=True,
-                                   encoding='UTF-8'
-    )
+    xml_text = pretty_format_xml(the_doc)
     sys.stdout.buffer.write(xml_text)
 
 @contextmanager
