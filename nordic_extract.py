@@ -29,6 +29,7 @@ from contextlib import contextmanager
 import sqlite3
 import lxml.etree
 import lxml.builder
+import lxml.html
 import html
 
 DEV_MODE = True # print debug output to stderr
@@ -142,11 +143,20 @@ def fixup_text(text):
         return None
     if text == "":
         return None
-    if text.startswith("<p>"):
-        assert text.endswith("</p>")
-        text = text[3:]
-        text = text[:-4]
-    return html.unescape(text)
+
+    fixed = html.unescape(text)
+    if "<" not in text:
+        assert fixed == text
+        return fixed
+
+    frags = lxml.html.fromstring("""<div>""" + fixed + """</div>""")
+
+    lxml.etree.strip_tags(frags, 'span')
+    for elt in frags.iterdescendants():
+        for a in elt.attrib.keys():
+            elt.attrib.pop(a)
+
+    return frags
 
 def transform(db, headword):
     assert 7 == len(tuple(headword))
