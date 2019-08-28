@@ -16,6 +16,7 @@
 #
 #  * does not disassemble the embedded (sic) HTML
 #  * does not extract all relevant fields
+#  * should make parts-of-speech consistent
 
 # See also:
 #   https://www.dhi.ac.uk/lmnl/nordicheadword/displayPage/200?browse=
