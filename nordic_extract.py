@@ -21,12 +21,10 @@
 # See also:
 #   https://www.dhi.ac.uk/lmnl/nordicheadword/displayPage/200?browse=
 
-import os
 import shutil
 import sys
 import argparse
-import tempfile
-from contextlib import contextmanager
+from named_temp import named_temp
 import sqlite3
 import lxml.etree
 import lxml.builder
@@ -238,15 +236,6 @@ def run(args, tmp_path):
     the_doc = ROOT(*headwords)
     xml_text = pretty_format_xml(the_doc)
     sys.stdout.buffer.write(xml_text)
-
-@contextmanager
-def named_temp():
-    fd, path = tempfile.mkstemp()
-
-    try:
-        yield path
-    finally:
-        os.unlink(path)
 
 def process_args():
     a = argparse.ArgumentParser()
