@@ -110,25 +110,27 @@ def transform(db, headword):
             *results
         )
 
+    related = {}
+
     tt = database.run_query(db, database.translations_query,
                             (headword["nhw_id"],))
-    translations = [ make_translation(t) for t in tt ]
+    related["translations"] = [ make_translation(t) for t in tt ]
 
     aa = database.run_query(db, database.alternatives_query,
                             (headword["nhw_id"],))
-    alternatives = [ make_alternative(a) for a in aa ]
+    related["alternatives"] = [ make_alternative(a) for a in aa ]
 
     cc = database.run_query(db, database.comparisons_query,
                             (headword["nhw_id"],))
-    comparisons  = [ make_comparison(c) for c in cc ]
+    related["comparisons"]  = [ make_comparison(c) for c in cc ]
 
     args = [
         NAME(headword['nordic_headword_name']),
         POS(headword['part_of_speech']),
         LANG(headword['language_code']),
-        COMPARISONS(*comparisons),
-        TRANSLATIONS(*translations),
-        ALTERNATIVES(*alternatives),
+        COMPARISONS(*related["comparisons"]),
+        TRANSLATIONS(*related["translations"]),
+        ALTERNATIVES(*related["alternatives"]),
         SURROGATE(str(headword['nhw_id']))
     ]
 
