@@ -110,17 +110,19 @@ def transform(db, headword):
             *results
         )
 
-    related_tables = {
+    _related_tables = {
         "comparisons":  (database.comparisons_query,  make_comparison),
         "translations": (database.translations_query, make_translation),
         "alternatives": (database.alternatives_query, make_alternative)
     }
-    related = {}
 
-    for table_name, table_handlers in related_tables.items():
-        query, handler = table_handlers
-        ii = database.run_query(db, query, (headword["nhw_id"],))
-        related[table_name] = [ handler(i) for i in ii ]
+    def related_tables():
+        for table_name, table_handlers in _related_tables.items():
+            query, handler = table_handlers
+            ii = database.run_query(db, query, (headword["nhw_id"],))
+            yield table_name, [ handler(i) for i in ii ]
+
+    related = dict([ (name, data) for name, data in related_tables() ])
 
     args = [
         NAME(headword['nordic_headword_name']),
