@@ -10,16 +10,8 @@
 # To the extent that this work is covered by copyright, you may redistribute
 # and/or modify it under the terms of the Apache Software Licence v2.0
 
-# Work in progress.
-#
-# Known bugs (out of date):
-#
-#  * does not disassemble the embedded (sic) HTML
-#  * does not extract all relevant fields
-#  * should make parts-of-speech consistent
-
-# See also:
-#   https://www.dhi.ac.uk/lmnl/nordicheadword/displayPage/200?browse=
+# For an example of a website built from the same data, see also:
+#   https://www.dhi.ac.uk/lmnl/nordicheadword/displayPage/200
 
 import sys
 import argparse
@@ -32,7 +24,7 @@ import database
 
 E        = lxml.builder.ElementMaker()
 
-# The names on the right hand side below, e.g., "nordic_headword", are used
+# The names on the right hand side below, e.g., "E.nordic_headword", are used
 # as the tag names in the generated XML, i.e.,
 #   <nordic_headword>...</nordic_headword>
 ROOT         = E.nordic_headwords
