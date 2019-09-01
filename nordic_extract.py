@@ -110,19 +110,17 @@ def transform(db, headword):
             *results
         )
 
+    related_tables = {
+        "comparisons":  (database.comparisons_query,  make_comparison),
+        "translations": (database.translations_query, make_translation),
+        "alternatives": (database.alternatives_query, make_alternative)
+    }
     related = {}
 
-    tt = database.run_query(db, database.translations_query,
-                            (headword["nhw_id"],))
-    related["translations"] = [ make_translation(t) for t in tt ]
-
-    aa = database.run_query(db, database.alternatives_query,
-                            (headword["nhw_id"],))
-    related["alternatives"] = [ make_alternative(a) for a in aa ]
-
-    cc = database.run_query(db, database.comparisons_query,
-                            (headword["nhw_id"],))
-    related["comparisons"]  = [ make_comparison(c) for c in cc ]
+    for table_name, table_handlers in related_tables.items():
+        query, handler = table_handlers
+        ii = database.run_query(db, query, (headword["nhw_id"],))
+        related[table_name] = [ handler(i) for i in ii ]
 
     args = [
         NAME(headword['nordic_headword_name']),
