@@ -9,9 +9,12 @@
 #
 # To the extent that this work is covered by copyright, you may redistribute
 # and/or modify it under the terms of the Apache Software Licence v2.0
-
+#
 # For an example of a website built from the same data, see also:
 #   https://www.dhi.ac.uk/lmnl/nordicheadword/displayPage/200
+#
+# Known bugs:
+#   some queries need SQL ORDER clauses
 
 import sys
 import argparse
@@ -49,6 +52,9 @@ def get_all_headwords(db):
     return database.run_query(db, database.main_query, [])
 
 def fixup_text(text):
+    """Return None or the fixed-up version of TEXT.  Fixed-up means that
+       the <span> tags and various attributes have been stripped from the
+       XML material in TEXT."""
     if text is None:
         return None
     if text == "":
@@ -69,6 +75,8 @@ def fixup_text(text):
     return frags
 
 def transform(db, headword):
+    """Transform a tuple comprising information about a HEADWORD, and return
+       appropriately-structured XML about it."""
     assert 7 == len(tuple(headword))
 
     def make_translation(t):

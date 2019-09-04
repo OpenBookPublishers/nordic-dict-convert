@@ -79,6 +79,9 @@ def fix_db(filename, active_filename):
     db.close()
 
 def get_db_handle(args, active_filename):
+    """Provides a DBAPI-style handle to an open database, having previously
+       copied that database to a temporary location and made some schema
+       changes to the temporary copy."""
     fix_db(args.filename, active_filename)
     db = sqlite3.dbapi2.connect(active_filename)
     db.row_factory = sqlite3.Row

@@ -20,6 +20,13 @@ from contextlib import contextmanager
 
 @contextmanager
 def named_temp():
+    """Return the pathname to a temporary file.  Usually, it suffices to
+       provide an open file handle, but this function should be used instead
+       in the rare circumstances where an explicit filename is required, e.g.,
+       where the temporary file must be re-opened.
+
+       This function may be used idiomatically as a context-manager, and
+       deletes the file unconditionally once it is out of scope."""
     fd, path = tempfile.mkstemp()
 
     try:
