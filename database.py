@@ -11,6 +11,7 @@
 
 import shutil
 import sqlite3
+import nordic_order
 
 DEV_MODE = True # print debug output to stderr
 
@@ -25,14 +26,14 @@ main_query = """
     FROM nordic_headword
     LEFT JOIN grammar ON nordic_headword.grammar_id = grammar.id
     LEFT JOIN language ON language_id = language.id
-   ORDER BY nordic_headword_name, grammar_id, language_code
---       COLLATE nordic
+    ORDER BY nordic_headword.name COLLATE nordic
   ;
 """
 
 translations_query = """
   SELECT * FROM translations WHERE nhw_id = ?
    ORDER BY nhw_id
+         COLLATE nordic
   ;
 """
 
@@ -41,6 +42,7 @@ alternatives_query = """
     LEFT JOIN language ON language_id = language.id
    WHERE nordic_headword_id = ?
    ORDER BY nordic_headword_id
+         COLLATE nordic
   ;
 """
 
@@ -49,6 +51,7 @@ comparisons_query = """
     LEFT JOIN nordic_headword ON nordic_headword2_id = nordic_headword.id
    WHERE nordic_headword1_id = ?
    ORDER BY nordic_headword1_id
+         COLLATE nordic
   ;
 """
 
@@ -91,8 +94,9 @@ def get_db_handle(args, active_filename):
        copied that database to a temporary location and made some schema
        changes to the temporary copy."""
     fix_db(args.filename, active_filename)
-    db = sqlite3.dbapi2.connect(active_filename)
+    db = sqlite3.connect(active_filename)
     db.row_factory = sqlite3.Row
+    nordic_order.add_collation(db, "nordic")
     return db
 
 def run_query(db, q, q_args):
