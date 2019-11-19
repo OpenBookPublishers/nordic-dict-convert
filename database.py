@@ -25,23 +25,31 @@ main_query = """
     FROM nordic_headword
     LEFT JOIN grammar ON nordic_headword.grammar_id = grammar.id
     LEFT JOIN language ON language_id = language.id
+   ORDER BY nordic_headword_name, grammar_id, language_code
+--       COLLATE nordic
   ;
 """
 
 translations_query = """
-  SELECT * FROM translations WHERE nhw_id = ?;
+  SELECT * FROM translations WHERE nhw_id = ?
+   ORDER BY nhw_id
+  ;
 """
 
 alternatives_query = """
   SELECT * FROM alternative
     LEFT JOIN language ON language_id = language.id
-    WHERE nordic_headword_id = ?;
+   WHERE nordic_headword_id = ?
+   ORDER BY nordic_headword_id
+  ;
 """
 
 comparisons_query = """
   SELECT nordic_headword2_id, name FROM comparison
     LEFT JOIN nordic_headword ON nordic_headword2_id = nordic_headword.id
-    WHERE nordic_headword1_id = ?;
+   WHERE nordic_headword1_id = ?
+   ORDER BY nordic_headword1_id
+  ;
 """
 
 def fix_db(filename, active_filename):
