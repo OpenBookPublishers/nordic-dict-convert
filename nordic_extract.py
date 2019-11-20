@@ -32,6 +32,8 @@ E        = lxml.builder.ElementMaker()
 #   <nordic_headword>...</nordic_headword>
 ROOT         = E.nordic_headwords
 HEADWORD     = E.nordic_headword
+ENG_ROOT     = E.english_headwords
+ENG_HEADWORD = E.english_headword
 NAME         = E.name
 POS          = E.type
 LANG         = E.language
@@ -154,8 +156,17 @@ def nordic_headwords_doc(db):
     headwords = [ transform(db, hw) for hw in get_all_headwords(db) ]
     return ROOT(*headwords)
 
+def english_headwords_doc(db):
+    headwords = []
+    return ENG_ROOT(*headwords)
+
 def pretty_format_xml(root):
     return lxml.etree.tostring(root, pretty_print=True, encoding='UTF-8')
+
+document_types = {
+    "nordic": nordic_headwords_doc,
+    "english": english_headwords_doc
+}
 
 def run(args, tmp_path):
     db = database.get_db_handle(args, tmp_path)
