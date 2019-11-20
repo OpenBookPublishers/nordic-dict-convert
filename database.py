@@ -37,7 +37,7 @@ main_english_query = """
          english_headword.id AS ehw_id
     FROM english_headword
     LEFT JOIN grammar ON english_headword.grammar_id = grammar.id
-    ORDER BY english_headword.name
+    ORDER BY english_headword.name COLLATE NOCASE
   ;
 """
 
