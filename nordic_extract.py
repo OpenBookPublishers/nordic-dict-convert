@@ -170,7 +170,7 @@ document_types = {
 
 def run(args, tmp_path):
     db = database.get_db_handle(args, tmp_path)
-    the_doc = nordic_headwords_doc(db)
+    the_doc = document_types[args.mode](db)
     xml_text = pretty_format_xml(the_doc)
     sys.stdout.buffer.write(xml_text)
 
@@ -179,6 +179,9 @@ def process_args():
     a.add_argument("--filename",
                    default="live.db",
                    help="Database filename to use instead of live.db")
+    a.add_argument("--mode",
+                   default="nordic",
+                   help="Langauge to output ('nordic' or 'english')")
     args = a.parse_args()
     with named_temp() as tmp_path:
         return run(args, tmp_path)
