@@ -48,6 +48,13 @@ translations_query = """
   ;
 """
 
+eng_translations_query = """
+  SELECT * FROM translations WHERE ehw_id = ?
+   ORDER BY nhw_id
+         COLLATE nordic
+  ;
+"""
+
 alternatives_query = """
   SELECT * FROM alternative
     LEFT JOIN language ON language_id = language.id
@@ -80,7 +87,9 @@ def fix_db(filename, active_filename):
         """CREATE VIEW translations AS
            SELECT translation_link.id AS tl_id,
                   translation_link.nordic_headword_id AS nhw_id,
+                  nordic_headword.name AS nordic_name,
                   language.short_name AS lang_short_name,
+                  english_headword_id AS ehw_id,
                   english_headword.name AS english_name,
                   evidence AS evidence,
                   law.short_name AS law_short_name
@@ -92,6 +101,8 @@ def fix_db(filename, active_filename):
              LEFT JOIN language ON
                        language_law_instance.language_id = language.id
              LEFT JOIN law ON law_id = law.id
+             LEFT JOIN nordic_headword ON
+                       nordic_headword_id = nordic_headword.id
            ;
         """
           ]

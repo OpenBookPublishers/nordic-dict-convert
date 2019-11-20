@@ -156,10 +156,44 @@ def transform(db, headword):
     return HEADWORD(*args)
 
 def transform_eng(db, headword):
+    def make_eng_translation(t):
+        results = [
+            HEADWORD(t["nordic_name"]),
+        ]
+        lang = t["lang_short_name"]
+        if lang is not None:
+            results.append(LANG(lang))
+
+        law = t["law_short_name"]
+        if law is not None:
+            results.append(LAW(law))
+
+        evidence_text = fixup_text(t["evidence"])
+        if evidence_text is not None:
+            results.append(EVIDENCE(evidence_text))
+
+        results.append(SURROGATE(str(t["nhw_id"])))
+
+        return TRANSLATION(
+            *results
+        )
+
+    _related_tables = {
+        "translations": (database.eng_translations_query, make_eng_translation)
+    }
+
+    def related_tables():
+        for table_name, table_handlers in _related_tables.items():
+            query, handler = table_handlers
+            ii = database.run_query(db, query, (headword["ehw_id"],))
+            yield table_name, [ handler(i) for i in ii ]
+
+    related = dict([ (name, data) for name, data in related_tables() ])
+
     args = [
         NAME(headword["english_headword_name"]),
         POS(headword["part_of_speech"]),
-        # translation
+        TRANSLATIONS(*related["translations"]),
         LANG(headword["language_code"]),
         SURROGATE(str(headword['ehw_id']))
     ]
