@@ -155,8 +155,16 @@ def transform(db, headword):
 
     return HEADWORD(*args)
 
-def transform_eng(db, hw):
-    return ENG_HEADWORD("TBD")
+def transform_eng(db, headword):
+    args = [
+        NAME(headword["english_headword_name"]),
+        POS(headword["part_of_speech"]),
+        # translation
+        LANG(headword["language_code"]),
+        SURROGATE(str(headword['ehw_id']))
+    ]
+
+    return ENG_HEADWORD(*args)
 
 def pretty_format_xml(root):
     return lxml.etree.tostring(root, pretty_print=True, encoding='UTF-8')
