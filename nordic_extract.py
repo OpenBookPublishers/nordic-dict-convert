@@ -53,6 +53,9 @@ SURROGATE    = E.id
 def get_all_headwords(db):
     return database.run_query(db, database.main_query, [])
 
+def get_all_english_headwords(db):
+    return database.run_query(db, database.main_english_query, [])
+
 def fixup_text(text):
     """Return None or the fixed-up version of TEXT.  Fixed-up means that
        the <span> tags and various attributes have been stripped from the
@@ -152,12 +155,16 @@ def transform(db, headword):
 
     return HEADWORD(*args)
 
+def transform_eng(db, hw):
+    return ENG_HEADWORD("TBD")
+
 def nordic_headwords_doc(db):
     headwords = [ transform(db, hw) for hw in get_all_headwords(db) ]
     return ROOT(*headwords)
 
 def english_headwords_doc(db):
-    headwords = []
+    headwords = [ transform_eng(db, hw)
+                  for hw in get_all_english_headwords(db) ]
     return ENG_ROOT(*headwords)
 
 def pretty_format_xml(root):

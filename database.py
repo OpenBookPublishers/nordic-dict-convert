@@ -30,6 +30,17 @@ main_query = """
   ;
 """
 
+main_english_query = """
+  SELECT grammar.name AS part_of_speech,
+         'Eng' AS language_code,
+         english_headword.name AS english_headword_name,
+         english_headword.id AS ehw_id
+    FROM english_headword
+    LEFT JOIN grammar ON english_headword.grammar_id = grammar.id
+    ORDER BY english_headword.name
+  ;
+"""
+
 translations_query = """
   SELECT * FROM translations WHERE nhw_id = ?
    ORDER BY nhw_id
