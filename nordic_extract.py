@@ -150,14 +150,16 @@ def transform(db, headword):
 
     return HEADWORD(*args)
 
+def nordic_headwords_doc(db):
+    headwords = [ transform(db, hw) for hw in get_all_headwords(db) ]
+    return ROOT(*headwords)
+
 def pretty_format_xml(root):
     return lxml.etree.tostring(root, pretty_print=True, encoding='UTF-8')
 
 def run(args, tmp_path):
     db = database.get_db_handle(args, tmp_path)
-    headwords = [ transform(db, hw) for hw in get_all_headwords(db) ]
-
-    the_doc = ROOT(*headwords)
+    the_doc = nordic_headwords_doc(db)
     xml_text = pretty_format_xml(the_doc)
     sys.stdout.buffer.write(xml_text)
 
