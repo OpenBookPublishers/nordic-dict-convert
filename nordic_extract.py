@@ -159,13 +159,14 @@ def transform_eng(db, hw):
     return ENG_HEADWORD("TBD")
 
 def nordic_headwords_doc(db):
-    headwords = [ transform(db, hw) for hw in get_all_headwords(db) ]
-    return ROOT(*headwords)
+    return ROOT(*[
+        transform(db, hw) for hw in get_all_headwords(db)
+    ])
 
 def english_headwords_doc(db):
-    headwords = [ transform_eng(db, hw)
-                  for hw in get_all_english_headwords(db) ]
-    return ENG_ROOT(*headwords)
+    return ENG_ROOT(*[
+        transform_eng(db, hw) for hw in get_all_english_headwords(db)
+    ])
 
 def pretty_format_xml(root):
     return lxml.etree.tostring(root, pretty_print=True, encoding='UTF-8')
