@@ -158,27 +158,18 @@ def transform(db, headword):
 def transform_eng(db, hw):
     return ENG_HEADWORD("TBD")
 
-def nordic_headwords_doc(db):
-    return ROOT(*[
-        transform(db, hw) for hw in get_all_headwords(db)
-    ])
-
-def english_headwords_doc(db):
-    return ENG_ROOT(*[
-        transform_eng(db, hw) for hw in get_all_english_headwords(db)
-    ])
-
 def pretty_format_xml(root):
     return lxml.etree.tostring(root, pretty_print=True, encoding='UTF-8')
 
 document_types = {
-    "nordic": nordic_headwords_doc,
-    "english": english_headwords_doc
+    "nordic": (get_all_headwords, transform, ROOT),
+    "english": (get_all_english_headwords, transform_eng, ENG_ROOT)
 }
 
 def run(args, tmp_path):
     db = database.get_db_handle(args, tmp_path)
-    the_doc = document_types[args.mode](db)
+    db_fn, headword_fn, tag = document_types[args.mode]
+    the_doc = tag(*[ headword_fn(db, hw) for hw in db_fn(db) ])
     xml_text = pretty_format_xml(the_doc)
     sys.stdout.buffer.write(xml_text)
 
