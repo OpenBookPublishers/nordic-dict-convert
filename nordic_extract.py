@@ -63,7 +63,7 @@ def fixup_text(text):
     fixed = html.unescape(text)
     if "<" not in text:
         assert fixed == text
-        return fixed
+        return fixed.strip()
 
     frags = lxml.html.fromstring("""<div>""" + fixed + """</div>""")
 
