@@ -160,7 +160,7 @@ def transform_eng(db, headword):
         results = [
             HEADWORD(t["nordic_name"]),
         ]
-        lang = t["lang_short_name"]
+        lang = t["trans_lang_short_name"]
         if lang is not None:
             results.append(LANG(lang))
 
