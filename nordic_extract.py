@@ -45,7 +45,6 @@ ALT_NAME     = E.alternative_name
 ALT_LANG     = E.alternative_lang
 TRANSLATIONS = E.translations
 TRANSLATION  = E.translation
-ENG_HEADWORD = E.english_headword
 EVIDENCE     = E.evidence
 LAW          = E.law
 SURROGATE    = E.id
@@ -186,7 +185,8 @@ def transform_eng(db, headword):
         for table_name, table_handlers in _related_tables.items():
             query, handler = table_handlers
             ii = database.run_query(db, query, (headword["ehw_id"],))
-            yield table_name, [ handler(i) for i in ii ]
+            translations = [ handler(i) for i in ii ]
+            yield table_name, translations
 
     related = dict([ (name, data) for name, data in related_tables() ])
 
