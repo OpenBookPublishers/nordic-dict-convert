@@ -49,7 +49,7 @@ TRANSLATION  = E.translation
 EVIDENCE     = E.evidence
 LAW          = E.law
 SURROGATE    = E.id
-UNTRANS      = E.untranslatable
+UNTRANS      = E.untranslated
 
 def get_all_headwords(db):
     return database.run_query(db, database.main_query, [])
@@ -82,7 +82,7 @@ def fixup_text(text):
 
 def patch_braces(english_name):
     RE = re.compile(r"{(.*?)}")
-    tmp = re.sub(RE, r"<untranslatable>\1</untranslatable>", english_name)
+    tmp = re.sub(RE, r"<untranslated>\1</untranslated>", english_name)
     newthing = "<english_headword>" + tmp + "</english_headword>"
     new_elt = lxml.etree.fromstring(newthing)
 
