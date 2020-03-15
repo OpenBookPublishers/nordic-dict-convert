@@ -24,6 +24,7 @@ import lxml.builder
 import lxml.html
 import html
 import database
+import re
 
 E        = lxml.builder.ElementMaker()
 
@@ -48,6 +49,7 @@ TRANSLATION  = E.translation
 EVIDENCE     = E.evidence
 LAW          = E.law
 SURROGATE    = E.id
+UNTRANS      = E.untranslatable
 
 def get_all_headwords(db):
     return database.run_query(db, database.main_query, [])
@@ -78,15 +80,24 @@ def fixup_text(text):
 
     return frags
 
+def patch_braces(english_name):
+    RE = re.compile(r"{(.*?)}")
+    tmp = re.sub(RE, r"<untranslatable>\1</untranslatable>", english_name)
+    newthing = "<english_headword>" + tmp + "</english_headword>"
+    new_elt = lxml.etree.fromstring(newthing)
+
+    return [
+        new_elt
+    ]
+
 def transform(db, headword):
     """Transform a tuple comprising information about a HEADWORD, and return
        appropriately-structured XML about it."""
     assert 7 == len(tuple(headword))
 
     def make_translation(t):
-        results = [
-            ENG_HEADWORD(t["english_name"]),
-        ]
+        english_name = t["english_name"]
+        results = patch_braces(english_name)
         lang = t["lang_short_name"]
         if lang is not None:
             results.append(LANG(lang))
