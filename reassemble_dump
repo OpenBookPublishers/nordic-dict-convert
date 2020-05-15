@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Run this programme in the directory containing the various SQL files
+
+SCRIPT_DIR=$(dirname $0)
+CONVERT=$SCRIPT_DIR/../mysql2sqlite/mysql2sqlite
+TARGET=new_nordic.db
+
+cat nordic_*.sql | $CONVERT - | sqlite3 $TARGET
+
+
